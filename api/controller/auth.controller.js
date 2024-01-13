@@ -1,7 +1,8 @@
+// Custom Modules
 import User from "../models/user.model.js";
-import bcrypt from "bcryptjs";
+import catchAsyncError from "../utils/catchAsyncError.utils.js";
 
-export async function signup(req, res, next) {
+export const signup = catchAsyncError(async function (req, res, next) {
   const { username, email, password } = req.body;
 
   const newUser = await User.create({ username, email, password });
@@ -12,4 +13,4 @@ export async function signup(req, res, next) {
       newUser,
     },
   });
-}
+});

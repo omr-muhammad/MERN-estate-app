@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 
 import userRouter from "./routes/user.route.js";
 import authRouter from "./routes/auth.route.js";
+import globalErrorHandler from "./controller/error.controller.js";
+import CreateError from "./utils/error.utils.js";
 
 dotenv.config();
 
@@ -25,3 +27,9 @@ app.listen(port, () => {
 
 app.use("/api/user", userRouter);
 app.use("/api/auth", authRouter);
+
+app.all("*", (req, res, next) => {
+  next(CreateError(`This ${req.originalUrl} Is Not On The Server`, 404));
+});
+
+app.use(globalErrorHandler);
