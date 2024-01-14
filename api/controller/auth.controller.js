@@ -8,7 +8,7 @@ export const signup = catchAsyncError(async function (req, res, next) {
   const newUser = await User.create({ username, email, password });
 
   res.status(201).json({
-    message: "success",
+    status: "success",
     data: {
       newUser,
     },
