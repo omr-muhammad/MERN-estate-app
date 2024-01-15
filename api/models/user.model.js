@@ -16,6 +16,7 @@ const userSchema = mongoose.Schema(
     password: {
       type: String,
       required: [true, `Password mustn't be empty`],
+      select: false,
     },
   },
   { timestamps: true }
