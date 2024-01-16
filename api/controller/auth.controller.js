@@ -44,7 +44,7 @@ export const signup = catchAsyncError(async function (req, res, next) {
   res.status(201).json({
     status: "success",
     data: {
-      newUser,
+      user: newUser,
     },
   });
 });
