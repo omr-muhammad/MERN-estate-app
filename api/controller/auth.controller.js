@@ -41,12 +41,7 @@ export const signup = catchAsyncError(async function (req, res, next) {
 
   const newUser = await User.create({ username, email, password });
 
-  res.status(201).json({
-    status: "success",
-    data: {
-      user: newUser,
-    },
-  });
+  createSendToken(newUser, 200, res);
 });
 
 export const signin = catchAsyncError(async function (req, res, next) {
@@ -65,5 +60,30 @@ export const signin = catchAsyncError(async function (req, res, next) {
   }
 
   // Sign In User By Sending The Token
+  createSendToken(user, 200, res);
+});
+
+export const google = catchAsyncError(async function (req, res, next) {
+  const { name, email, photo } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    const generatedPassword =
+      Math.random().toString(36).slice(-8) +
+      Math.random().toString(36).slice(-8);
+    const uniqueName =
+      name.replace(" ", "") + Math.random().toString(36).slice(-4);
+
+    const newUser = await User.create({
+      username: uniqueName,
+      email,
+      password: generatedPassword,
+      avatar: photo,
+    });
+
+    return createSendToken(newUser, 200, res);
+  }
+
   createSendToken(user, 200, res);
 });

@@ -13,6 +13,11 @@ const userSchema = mongoose.Schema(
       required: [true, `email mustn't be empty`],
       unique: [true, `This email is already used please try another one`],
     },
+    avatar: {
+      type: String,
+      default:
+        "https://www.shutterstock.com/image-vector/vector-flat-illustration-grayscale-avatar-600nw-2281862025.jpg",
+    },
     password: {
       type: String,
       required: [true, `Password mustn't be empty`],
