@@ -4,6 +4,7 @@ import Profile from "./pages/Profile";
 import About from "./pages/About";
 import Header from "./components/Header";
 import SignTemplate from "./pages/SignTemplate";
+import PrivateRoute from "./components/PrivateRoute";
 
 export default function App() {
   return (
@@ -16,7 +17,9 @@ export default function App() {
           element={<SignTemplate key={"signin"} isSigninPage={true} />}
         />
         <Route path="sign-up" element={<SignTemplate key={"signup"} />} />
-        <Route path="profile" element={<Profile />} />
+        <Route element={<PrivateRoute />}>
+          <Route path="profile" element={<Profile />} />
+        </Route>
         <Route path="about" element={<About />} />
       </Routes>
     </BrowserRouter>

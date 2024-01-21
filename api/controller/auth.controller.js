@@ -1,3 +1,6 @@
+// NODE Modules
+import { promisify } from "util";
+
 // Third Party Modules
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -23,7 +26,7 @@ function createSendToken(user, statusCode, res) {
     path: "/",
   };
 
-  res.cookie("access-token", token, cookieOptions);
+  res.cookie("access_token", token, cookieOptions);
   user.password = undefined;
   // const { password, ...resUser } = user._doc;
 
@@ -86,4 +89,37 @@ export const google = catchAsyncError(async function (req, res, next) {
   }
 
   createSendToken(user, 200, res);
+});
+
+export const protect = catchAsyncError(async function (req, res, next) {
+  // Check If There Is A Token
+  const { authorization } = req.headers;
+
+  let token;
+  if (authorization && authorization.startsWith("Bearer")) {
+    token = authorization.split(" ").at(1);
+  } else if (req.cookies.access_token) {
+    token = req.cookies.access_token;
+  }
+
+  if (!token)
+    return next(
+      CreateError("You are not logged in. Please login to get access", 401)
+    );
+
+  // Verfication User
+  const decoded = await promisify(jwt.verify)(process.env.JWT_SECRET);
+
+  // Check For The User
+  const user = await User.findById(decoded.id);
+
+  if (!user)
+    return next(
+      CreateError("The user belonging to this token does no longer exist", 401)
+    );
+
+  // GRANT ACCESS TO PROTECT ROUTE
+  req.user = user;
+  res.locals.user = user;
+  next();
 });
