@@ -6,6 +6,7 @@ import userRouter from "./routes/user.route.js";
 import authRouter from "./routes/auth.route.js";
 import globalErrorHandler from "./controller/error.controller.js";
 import CreateError from "./utils/error.utils.js";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ const app = express();
 
 // GlOBAL MIDDLEWARE
 app.use(express.json());
+app.use(cookieParser());
 
 const port = 3000;
 

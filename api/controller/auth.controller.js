@@ -1,6 +1,4 @@
 // NODE Modules
-import { promisify } from "util";
-
 // Third Party Modules
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -37,6 +35,24 @@ function createSendToken(user, statusCode, res) {
       user,
     },
   });
+}
+
+function verifyToken(req, next) {
+  return async (err, decoded) => {
+    if (err)
+      return next(
+        CreateError(
+          "The user belonging to this token does no longer exist",
+          401
+        )
+      );
+
+    const user = await User.findById(decoded.id);
+    console.log(user);
+
+    req.user = user;
+    next();
+  };
 }
 
 export const signup = catchAsyncError(async function (req, res, next) {
@@ -92,6 +108,7 @@ export const google = catchAsyncError(async function (req, res, next) {
 });
 
 export const protect = catchAsyncError(async function (req, res, next) {
+  console.log("INSIDE THE PROTECT MIDDLEWARE");
   // Check If There Is A Token
   const { authorization } = req.headers;
 
@@ -108,18 +125,6 @@ export const protect = catchAsyncError(async function (req, res, next) {
     );
 
   // Verfication User
-  const decoded = await promisify(jwt.verify)(process.env.JWT_SECRET);
-
-  // Check For The User
-  const user = await User.findById(decoded.id);
-
-  if (!user)
-    return next(
-      CreateError("The user belonging to this token does no longer exist", 401)
-    );
-
-  // GRANT ACCESS TO PROTECT ROUTE
-  req.user = user;
-  res.locals.user = user;
-  next();
+  // verifyToken is the function that returns the callback function which runs after the verify
+  jwt.verify(token, process.env.JWT_SECRET, verifyToken(req, next));
 });
