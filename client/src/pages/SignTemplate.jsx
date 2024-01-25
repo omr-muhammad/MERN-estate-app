@@ -16,8 +16,15 @@ const options = (body) => ({
   body,
 });
 
+const initFormData = {
+  username: "",
+  email: "",
+  password: "",
+  avatar: "",
+};
+
 export default function SignTemplate({ isSigninPage }) {
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState(initFormData);
   const { isLoading, error } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -55,7 +62,9 @@ export default function SignTemplate({ isSigninPage }) {
 
   return (
     <div className="p-3 max-w-lg mx-auto">
-      <h1 className="text-3xl text-center font-semibold my-7">Sign Up</h1>
+      <h1 className="text-3xl text-center font-semibold my-7">
+        {isSigninPage ? "Sign In" : "Sign Up"}
+      </h1>
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         {!isSigninPage && (
           <input

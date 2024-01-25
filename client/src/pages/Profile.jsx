@@ -6,11 +6,16 @@ import {
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
+import { useNavigate } from "react-router-dom";
+
 import { app } from "../firebase";
 import {
   updateUserFailure,
   updateUserSuccess,
   updateUserStart,
+  deleteUserStart,
+  deleteUserSuccess,
+  deleteUserFailure,
 } from "../../redux/user/userSlice";
 
 export default function Profile() {
@@ -22,6 +27,7 @@ export default function Profile() {
   const [successUpdate, setSuccessUpdate] = useState(false);
   const { loading, error, currentUser } = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     function handleFileUpload() {
@@ -37,7 +43,7 @@ export default function Profile() {
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           setFilePerc(Math.round(progress));
         },
-        (error) => {
+        (/* error */) => {
           setFileUploadError(true);
         },
         () => {
@@ -63,7 +69,7 @@ export default function Profile() {
     try {
       dispatch(updateUserStart());
 
-      const res = await fetch(`/api/user/update/${currentUser._id}`, {
+      const res = await fetch(`/api/user/updateMe/${currentUser._id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -80,6 +86,27 @@ export default function Profile() {
       setSuccessUpdate(true);
     } catch (error) {
       dispatch(updateUserFailure(error.message));
+    }
+  }
+
+  async function handleDelete() {
+    dispatch(deleteUserStart());
+    try {
+      const res = await fetch(`/api/user/deleteMe/${currentUser._id}`, {
+        method: "DELETE",
+      });
+
+      if (res.status === 204) {
+        dispatch(deleteUserSuccess());
+      } else {
+        const data = res.json();
+        throw new Error(data.message);
+      }
+    } catch (error) {
+      dispatch(deleteUserFailure(error.message));
+      console.log("Error", error);
+    } finally {
+      navigate("/sign-in");
     }
   }
 
@@ -147,7 +174,9 @@ export default function Profile() {
         </button>
       </form>
       <div className="flex justify-between mt-5">
-        <span className="text-red-700 cursor-pointer">Delete account</span>
+        <span onClick={handleDelete} className="text-red-700 cursor-pointer">
+          Delete account
+        </span>
         <span className="text-red-700 cursor-pointer">Sign out</span>
       </div>
 

@@ -37,7 +37,7 @@ function createSendToken(user, statusCode, res) {
   });
 }
 
-function verifyToken(req, next) {
+function verifyToken(req, res, next) {
   return async (err, decoded) => {
     if (err)
       return next(
@@ -48,7 +48,13 @@ function verifyToken(req, next) {
       );
 
     const user = await User.findById(decoded.id);
-    console.log(user);
+
+    if (!user) {
+      res.clearCookie("access_token");
+      return next(
+        CreateError(`There is no user with this ID: ${decoded.id}`, 404)
+      );
+    }
 
     req.user = user;
     next();
@@ -108,7 +114,6 @@ export const google = catchAsyncError(async function (req, res, next) {
 });
 
 export const protect = catchAsyncError(async function (req, res, next) {
-  console.log("INSIDE THE PROTECT MIDDLEWARE");
   // Check If There Is A Token
   const { authorization } = req.headers;
 
@@ -126,5 +131,5 @@ export const protect = catchAsyncError(async function (req, res, next) {
 
   // Verfication User
   // verifyToken is the function that returns the callback function which runs after the verify
-  jwt.verify(token, process.env.JWT_SECRET, verifyToken(req, next));
+  jwt.verify(token, process.env.JWT_SECRET, verifyToken(req, res, next));
 });
