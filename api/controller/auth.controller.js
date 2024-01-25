@@ -113,6 +113,14 @@ export const google = catchAsyncError(async function (req, res, next) {
   createSendToken(user, 200, res);
 });
 
+export const singout = catchAsyncError(async function (req, res, next) {
+  res.clearCookie("access_token");
+  res.status(200).json({
+    status: "success",
+    message: "User Signout Successfully",
+  });
+});
+
 export const protect = catchAsyncError(async function (req, res, next) {
   // Check If There Is A Token
   const { authorization } = req.headers;

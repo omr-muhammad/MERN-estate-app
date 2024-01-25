@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 
 import { app } from "../firebase";
-import { signInSuccess } from "../../redux/user/userSlice";
+import { userAuthSuccess } from "../../redux/user/userSlice";
 
 export default function OAuth() {
   const dispatch = useDispatch();
@@ -29,7 +29,7 @@ export default function OAuth() {
       });
 
       const data = await res.json();
-      dispatch(signInSuccess(data.data.user));
+      dispatch(userAuthSuccess(data.data.user));
       navigate("/");
     } catch (error) {
       console.log("There was an error signing in with Google", error);

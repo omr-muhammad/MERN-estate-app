@@ -2,9 +2,9 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  signInStart,
-  signInSuccess,
-  signInFailure,
+  userAuthStart,
+  userAuthSuccess,
+  userAuthFailure,
 } from "../../redux/user/userSlice";
 import OAuth from "../components/OAuth";
 
@@ -38,7 +38,7 @@ export default function SignTemplate({ isSigninPage }) {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    dispatch(signInStart());
+    dispatch(userAuthStart());
 
     try {
       const URL = `/api/auth/${isSigninPage ? "signin" : "signup"}`;
@@ -49,14 +49,14 @@ export default function SignTemplate({ isSigninPage }) {
       const data = await res.json();
 
       if (data.status.startsWith("s")) {
-        dispatch(signInSuccess(data.data.user));
+        dispatch(userAuthSuccess(data.data.user));
         navigate("/");
       } else {
-        dispatch(signInFailure(data.message));
+        dispatch(userAuthFailure(data.message));
       }
     } catch (error) {
       console.log("Error From FrontEnd", error);
-      dispatch(signInFailure());
+      dispatch(userAuthFailure());
     }
   }
 
