@@ -60,7 +60,7 @@ export default function Profile() {
     if (file) {
       handleFileUpload();
     }
-  }, [file]);
+  }, [file, currentUser.id]);
 
   function handleChange(e) {
     setFormData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
@@ -136,6 +136,7 @@ export default function Profile() {
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
           type="file"
+          id="image_file"
           ref={fileRef}
           hidden
           onChange={(e) => setFile(e.target.files[0])}
