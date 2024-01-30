@@ -14,7 +14,7 @@ const listingSchema = mongoose.Schema(
       type: String,
       required: [true, `Listing must have an address`],
     },
-    reqularPrice: {
+    regularPrice: {
       type: Number,
       required: [true, `Listing must have a price`],
     },
