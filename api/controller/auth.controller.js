@@ -139,5 +139,5 @@ export const protect = catchAsyncError(async function (req, res, next) {
 
   // Verfication User
   // verifyToken is the function that returns the callback function which runs after the verify
-  jwt.verify(token, process.env.JWT_SECRET, verifyToken(req, res, next));
+  return jwt.verify(token, process.env.JWT_SECRET, verifyToken(req, res, next));
 });
