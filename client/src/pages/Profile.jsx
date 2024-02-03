@@ -287,6 +287,7 @@ export default function Profile() {
                   <button
                     onClick={(e) => {
                       e.preventDefault();
+                      e.stopPropagation();
                       handleListingDelete(listing._id);
                     }}
                     className="text-red-700 uppercase"

@@ -52,3 +52,25 @@ export const deleteListing = catchAsyncError(async function (req, res, next) {
     data: null,
   });
 });
+
+export const updateListing = catchAsyncError(async function (req, res, next) {
+  const listing = await Listing.findById(req.params.id);
+
+  if (!listing) return next(CreateError("Listing not found.", 404));
+
+  if (req.user.id !== listing.userRef.toString())
+    return next(CreateError("You can only update your own listings", 401));
+
+  const updatedListing = await Listing.findByIdAndUpdate(
+    req.params.id,
+    req.body,
+    { new: true, runValidators: true }
+  );
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      listing: updatedListing,
+    },
+  });
+});

@@ -4,6 +4,7 @@ import {
   deleteListing,
   getUserListings,
   setUserId,
+  updateListing,
 } from "../controller/listing.controller.js";
 import { protect } from "../controller/auth.controller.js";
 
@@ -14,5 +15,8 @@ router
   .get(protect, getUserListings)
   .post(protect, setUserId, createListing);
 
-router.route("/:id").delete(protect, deleteListing);
+router
+  .route("/:id")
+  .delete(protect, deleteListing)
+  .patch(protect, updateListing);
 export default router;
