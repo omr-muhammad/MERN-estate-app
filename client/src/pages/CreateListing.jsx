@@ -10,7 +10,7 @@ import {
 import { app } from "../firebase";
 
 const initFormData = {
-  imageUrls: [],
+  imgUrls: [],
   name: "",
   description: "",
   address: "",
@@ -72,7 +72,7 @@ export default function CreateListing() {
         .then((url) => {
           setFormData((prev) => ({
             ...prev,
-            imageUrls: formData.imageUrls.concat(url),
+            imgUrls: formData.imgUrls.concat(url),
           }));
           setImageUploadError(null);
           setIsUploading(false);
@@ -90,7 +90,7 @@ export default function CreateListing() {
   function handleRemoveImage(i) {
     setFormData((prev) => ({
       ...prev,
-      imageUrls: prev.imageUrls.filter((img, index) => index !== i),
+      imgUrls: prev.imgUrls.filter((img, index) => index !== i),
     }));
   }
 
@@ -107,7 +107,7 @@ export default function CreateListing() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if (formData.imageUrls.length < 1)
+    if (formData.imgUrls.length < 1)
       return setError("You should at least upload one image.");
 
     if (+formData.regularPrice < +formData.discountPrice)
@@ -321,8 +321,8 @@ export default function CreateListing() {
           {imageUploadError && (
             <p className="text-red-700 text-sm">{imageUploadError}</p>
           )}
-          {formData.imageUrls.length > 0 &&
-            formData.imageUrls.map((url, i) => (
+          {formData.imgUrls.length > 0 &&
+            formData.imgUrls.map((url, i) => (
               <div
                 key={url}
                 className="flex justify-between p-3 border items-center"
