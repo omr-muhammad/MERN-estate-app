@@ -2,6 +2,7 @@ import express from "express";
 import {
   createListing,
   deleteListing,
+  getListing,
   getUserListings,
   setUserId,
   updateListing,
@@ -17,6 +18,7 @@ router
 
 router
   .route("/:id")
+  .get(getListing)
   .delete(protect, deleteListing)
   .patch(protect, updateListing);
 export default router;

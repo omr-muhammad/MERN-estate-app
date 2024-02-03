@@ -298,7 +298,7 @@ export default function Profile() {
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      history.push(`/update-listing/${listing._id}`);
+                      navigate(`/update-listing/${listing._id}`);
                     }}
                     className="text-green-700 uppercase"
                   >

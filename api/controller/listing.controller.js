@@ -41,11 +41,10 @@ export const deleteListing = catchAsyncError(async function (req, res, next) {
 
   if (!listing) return next(CreateError("Listing not found", 404));
 
-  console.log(req.user._id, listing.userRef);
   if (req.user.id !== listing.userRef.toString())
     return next(CreateError("You can only delete your own listings", 401));
 
-  await Listing.findByIdAndDelete(req.user.id);
+  await Listing.findByIdAndDelete(listing._id);
 
   res.status(204).json({
     status: "success",
@@ -71,6 +70,19 @@ export const updateListing = catchAsyncError(async function (req, res, next) {
     status: "success",
     data: {
       listing: updatedListing,
+    },
+  });
+});
+
+export const getListing = catchAsyncError(async function (req, res, next) {
+  const listing = await Listing.findById(req.params.id);
+
+  if (!listing) return next(CreateError("Listing not found", 404));
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      listing,
     },
   });
 });

@@ -5,7 +5,7 @@ import About from "./pages/About";
 import Header from "./components/Header";
 import SignTemplate from "./pages/SignTemplate";
 import PrivateRoute from "./components/PrivateRoute";
-import CreateListing from "./pages/CreateListing";
+import CreateUpdateListing from "./pages/CreateUpdateListing";
 
 export default function App() {
   return (
@@ -20,7 +20,14 @@ export default function App() {
         <Route path="sign-up" element={<SignTemplate key={"signup"} />} />
         <Route element={<PrivateRoute />}>
           <Route path="profile" element={<Profile />} />
-          <Route path="create-listing" element={<CreateListing />} />
+          <Route
+            path="create-listing"
+            element={<CreateUpdateListing isUpdate={false} />}
+          />
+          <Route
+            path="update-listing/:listingID"
+            element={<CreateUpdateListing isUpdate={true} />}
+          />
         </Route>
         <Route path="about" element={<About />} />
       </Routes>
