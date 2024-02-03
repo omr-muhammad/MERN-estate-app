@@ -146,14 +146,29 @@ export default function Profile() {
         setShowListingsError(`You don&apos;t have listings`);
         return;
       }
-
-      console.log(data.data.listings);
       setUserListings(data.data.listings);
     } catch (error) {
       setShowListingsError("Sorry There Is an Error Showing Listings.");
     }
   }
 
+  async function handleListingDelete(id) {
+    try {
+      const res = await fetch(`/api/listing/${id}`, {
+        method: "DELETE",
+      });
+
+      if (res.status !== 204) {
+        const data = await res.json();
+        console.log(data);
+        return;
+      }
+
+      setUserListings((prev) => prev.filter((listing) => listing._id !== id));
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
@@ -270,7 +285,10 @@ export default function Profile() {
 
                 <div className="flex flex-col items-center">
                   <button
-                    // onClick={() => handleListingDelete(listing._id)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleListingDelete(listing._id);
+                    }}
                     className="text-red-700 uppercase"
                   >
                     Delete

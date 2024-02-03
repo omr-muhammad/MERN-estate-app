@@ -35,3 +35,20 @@ export const getUserListings = catchAsyncError(async function (req, res, next) {
     },
   });
 });
+
+export const deleteListing = catchAsyncError(async function (req, res, next) {
+  const listing = await Listing.findById(req.params.id);
+
+  if (!listing) return next(CreateError("Listing not found", 404));
+
+  console.log(req.user._id, listing.userRef);
+  if (req.user.id !== listing.userRef.toString())
+    return next(CreateError("You can only delete your own listings", 401));
+
+  await Listing.findByIdAndDelete(req.user.id);
+
+  res.status(204).json({
+    status: "success",
+    data: null,
+  });
+});
