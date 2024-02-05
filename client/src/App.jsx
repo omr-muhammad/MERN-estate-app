@@ -6,6 +6,7 @@ import Header from "./components/Header";
 import SignTemplate from "./pages/SignTemplate";
 import PrivateRoute from "./components/PrivateRoute";
 import CreateUpdateListing from "./pages/CreateUpdateListing";
+import Listing from "./pages/Listing";
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
           element={<SignTemplate key={"signin"} isSigninPage={true} />}
         />
         <Route path="sign-up" element={<SignTemplate key={"signup"} />} />
+        <Route path="listing/:listingID" element={<Listing />} />
         <Route element={<PrivateRoute />}>
           <Route path="profile" element={<Profile />} />
           <Route
