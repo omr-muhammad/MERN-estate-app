@@ -49,3 +49,16 @@ export const deleteMe = catchAsyncError(async function (req, res, next) {
     },
   });
 });
+
+export const getUserById = catchAsyncError(async function (req, res, next) {
+  const user = await User.findById(req.params.id);
+
+  if (!user) return next(CreateError("User not found", 404));
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      user,
+    },
+  });
+});
