@@ -86,3 +86,31 @@ export const getListing = catchAsyncError(async function (req, res, next) {
     },
   });
 });
+
+export const getAllListings = catchAsyncError(async function (req, res, next) {
+  const limit = +req.query.limit || 9;
+  const startIndex = +req.query.startIndex || 0;
+  const sort = req.query.sort || "createdAt";
+  const order = req.query.order || "desc";
+
+  let { offer, furnished, parking, type, searchTerm } = req.query;
+
+  const listings = await Listing.find({
+    name: { $regex: searchTerm || "", $options: "i" },
+    offer: { $in: offer || [false, true] },
+    furnished: { $in: furnished || [false, true] },
+    parking: { $in: parking || [false, true] },
+    type: { $in: type || ["sale", "rent"] },
+  })
+    .sort({ [sort]: order })
+    .limit(limit)
+    .skip(startIndex);
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      results: listings.length,
+      listings,
+    },
+  });
+});
