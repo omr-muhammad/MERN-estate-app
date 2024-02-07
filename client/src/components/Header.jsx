@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import Search from "./Search";
+import SearchInput from "./SearchInput";
 
 export default function Header() {
   const { currentUser } = useSelector((state) => state.user);
@@ -14,7 +14,7 @@ export default function Header() {
             <span className="text-slate-700">Estate</span>
           </h1>
         </Link>
-        <Search />
+        <SearchInput />
         <ul className="flex gap-4">
           <Link to="/home">
             <li className="hidden sm:inline text-slate-700 hover:underline">

@@ -7,6 +7,7 @@ import SignTemplate from "./pages/SignTemplate";
 import PrivateRoute from "./components/PrivateRoute";
 import CreateUpdateListing from "./pages/CreateUpdateListing";
 import Listing from "./pages/Listing";
+import Search from "./pages/Search";
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
         />
         <Route path="sign-up" element={<SignTemplate key={"signup"} />} />
         <Route path="listing/:listingID" element={<Listing />} />
+        <Route path="/search" element={<Search />} />
         <Route element={<PrivateRoute />}>
           <Route path="profile" element={<Profile />} />
           <Route
