@@ -2,6 +2,19 @@ import Listing from '../models/listing.model.js';
 import catchAsyncError from '../utils/catchAsyncError.utils.js';
 import CreateError from '../utils/error.utils.js';
 
+function correctData(type, data) {
+  let query;
+
+  if (type) {
+    query = data === '' || data === undefined ? ['sale', 'rent'] : data;
+    return { $in: query };
+  }
+
+  query = data === 'false' || data === undefined ? [true, false] : true;
+
+  return { $in: query };
+}
+
 export const setUserId = (req, res, next) => {
   req.body.userRef = req.user._id;
   next();
@@ -95,12 +108,17 @@ export const getAllListings = catchAsyncError(async function (req, res, next) {
 
   let { offer, furnished, parking, type, searchTerm } = req.query;
 
+  offer = correctData(false, offer);
+  furnished = correctData(false, furnished);
+  parking = correctData(false, parking);
+  type = correctData(true, type);
+
   const listings = await Listing.find({
     name: { $regex: searchTerm || '' },
-    offer: { $in: offer === 'false' ? [true, false] : true },
-    furnished: { $in: furnished === 'false' ? [true, false] : true },
-    parking: { $in: parking === 'false' ? [true, false] : true },
-    type: { $in: type !== '' ? type : ['sale', 'rent'] },
+    offer,
+    furnished,
+    parking,
+    type,
   })
     .sort({ [sort]: order })
     .limit(limit)
