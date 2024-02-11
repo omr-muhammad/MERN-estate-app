@@ -20,6 +20,7 @@ export default function Search() {
   const [sidebarData, setSidebarData] = useState(initSidebarData);
   const [listings, setListings] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isMoreListings, setIsMoreListings] = useState(false);
   const [searchParams] = useSearchParams();
   const searchTermFromUrl = searchParams.get('searchTerm');
   const navigate = useNavigate();
@@ -27,6 +28,34 @@ export default function Search() {
   useEffect(() => {
     setSidebarData((prev) => ({ ...prev, searchTerm: searchTermFromUrl }));
   }, [searchTermFromUrl]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const search = createSearchParams(sidebarData).toString();
+      setIsLoading(true);
+      setIsMoreListings(false);
+
+      try {
+        const res = await fetch(`/api/listing/all?${search}`);
+        const data = await res.json();
+
+        if (data.data.listings.length > 8) {
+          setIsMoreListings(true);
+        } else {
+          setIsMoreListings(false);
+        }
+
+        setListings(data.data.listings);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sidebarData.searchTerm]);
 
   function handleChange(e) {
     const turthyFalsey = ['offer', 'parking', 'furnished'];
@@ -80,10 +109,17 @@ export default function Search() {
 
     async function fetchData() {
       setIsLoading(true);
+      setIsMoreListings(false);
 
       try {
         const res = await fetch(`/api/listing/all?${search}`);
         const data = await res.json();
+
+        if (data.data.listings.length > 8) {
+          setIsMoreListings(true);
+        } else {
+          setIsMoreListings(false);
+        }
 
         setListings(data.data.listings);
       } catch (error) {
@@ -96,7 +132,25 @@ export default function Search() {
     fetchData();
   }
 
-  console.log(listings);
+  async function showMore() {
+    const startIndex = listings.length;
+
+    // Create the query then adding startIndex
+    const params = createSearchParams(sidebarData);
+    params.set('startIndex', startIndex);
+    const search = params.toString();
+
+    setIsMoreListings(false);
+    const res = await fetch(`/api/listing/all?${search}`);
+    const data = await res.json();
+    if (data.data.listings.length < 9) {
+      setIsMoreListings(false);
+    }
+
+    console.log(data);
+    setListings((prev) => prev.concat(data.data.listings));
+  }
+
   return (
     <div className='flex flex-col md:flex-row'>
       <div className='p-7  border-b-2 md:border-r-2 md:min-h-screen'>
@@ -111,7 +165,7 @@ export default function Search() {
               id='searchTerm'
               placeholder='Search...'
               className='border rounded-lg p-3 w-full'
-              value={sidebarData.searchTerm}
+              value={sidebarData.searchTerm || ''}
               onChange={handleChange}
             />
           </div>
@@ -205,6 +259,14 @@ export default function Search() {
             listings.map((listing) => (
               <ListingItem key={listing._id} {...listing} />
             ))}
+          {isMoreListings && (
+            <button
+              className='text-green-700 hover:underline p-7 text-center w-full'
+              onClick={showMore}
+            >
+              Show More
+            </button>
+          )}
         </div>
       </div>
     </div>

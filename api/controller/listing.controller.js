@@ -95,17 +95,16 @@ export const getAllListings = catchAsyncError(async function (req, res, next) {
 
   let { offer, furnished, parking, type, searchTerm } = req.query;
 
-  console.log(req.query);
   const listings = await Listing.find({
     name: { $regex: searchTerm || '' },
     offer: { $in: offer === 'false' ? [true, false] : true },
     furnished: { $in: furnished === 'false' ? [true, false] : true },
     parking: { $in: parking === 'false' ? [true, false] : true },
     type: { $in: type !== '' ? type : ['sale', 'rent'] },
-  });
-  // .sort({ [sort]: order })
-  // .limit(limit)
-  // .skip(startIndex);
+  })
+    .sort({ [sort]: order })
+    .limit(limit)
+    .skip(startIndex);
 
   res.status(200).json({
     status: 'success',
