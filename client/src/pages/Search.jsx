@@ -27,16 +27,15 @@ export default function Search() {
 
   useEffect(() => {
     setSidebarData((prev) => ({ ...prev, searchTerm: searchTermFromUrl }));
-  }, [searchTermFromUrl]);
 
-  useEffect(() => {
     async function fetchData() {
-      const search = createSearchParams(sidebarData).toString();
       setIsLoading(true);
       setIsMoreListings(false);
 
       try {
-        const res = await fetch(`/api/listing/all?${search}`);
+        const res = await fetch(
+          `/api/listing/all?searchTerm=${searchTermFromUrl}`
+        );
         const data = await res.json();
 
         if (data.data.listings.length > 8) {
@@ -54,8 +53,7 @@ export default function Search() {
     }
 
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sidebarData.searchTerm]);
+  }, [searchTermFromUrl]);
 
   function handleChange(e) {
     const turthyFalsey = ['offer', 'parking', 'furnished'];
@@ -135,10 +133,9 @@ export default function Search() {
   async function showMore() {
     const startIndex = listings.length;
 
-    // Create the query then adding startIndex
-    const params = createSearchParams(sidebarData);
-    params.set('startIndex', startIndex);
-    const search = params.toString();
+    // Adding startIndex to query
+    searchParams.set('startIndex', startIndex);
+    const search = searchParams.toString();
 
     setIsMoreListings(false);
     const res = await fetch(`/api/listing/all?${search}`);
